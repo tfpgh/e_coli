@@ -1,10 +1,9 @@
 [project]
 name = "e-coli"
 version = "0.1.0"
-description = "Add your description here"
+description = "Middlebury College CSCI 0321 final project."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
-    "biopython>=1.87",
-    "numpy>=2.4.4",
+    "jax>=0.10.0",
 ]
