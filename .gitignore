@@ -219,6 +219,9 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+# gitignore syntax is quite annoying...
+data/*
+!data/raw_datasets/
 data/raw_datasets/*
 !data/raw_datasets/.gitkeep
 
