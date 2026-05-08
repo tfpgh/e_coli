@@ -134,4 +134,13 @@ def score_protein_pairs(
             progress,
         )
 
-    return {pair: float(scores[i]) for i, pair in enumerate(pair_list)}
+    # OrthoMCL-style normalization
+    self_scores = np.empty(len(proteins_list), dtype=np.float64)
+    for i, p in enumerate(proteins_list):
+        residues = np.asarray(p, dtype=np.int32)
+        self_scores[i] = scoring_matrix[residues, residues].sum()
+
+    return {
+        pair: float(scores[i] / np.sqrt(self_scores[pair[0]] * self_scores[pair[1]]))
+        for i, pair in enumerate(pair_list)
+    }

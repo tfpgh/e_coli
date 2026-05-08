@@ -9,3 +9,4 @@
 **April 26th, 9:00-10:00pm**: I intended to figure out a way to improve the kmer filter implementation. I found a way to do many less comparisons by using a dictionary and flipping from iterating over proteins to iterating over kmers. This makes the algorithm run in ~1 minute.
 
 **May 8th, 4:00-5:00pm**: My goal was to implement Smith-Waterman on the pairwise comparisons. I accomplished this, although it was naively way too slow, so I converted to Numba and now can run in ~1 hour.
+**May 8th, 5:00-8:00pm**: My goal was to get as far as possible in an implementation of MCL on the scored protein pairs, while at the same time letting the protein pair scoring run. I ran the scoring but realized I want to do normalization in stage 1 so I'm re-running it. I got most of MCL implemented.

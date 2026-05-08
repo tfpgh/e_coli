@@ -1,10 +1,11 @@
 import pickle
 from pathlib import Path
 
-from config import PreprocessingConfig, Stage1Config
+from config import PreprocessingConfig, Stage1Config, Stage2Config
 from preprocessing import PreprocessedDataset, preprocess_dataset
 from stage_1.kmer_filter import kmer_filter
 from stage_1.scoring import score_protein_pairs
+from stage_2.clustering import cluster_proteins
 
 if __name__ == "__main__":
     preprocessing_config = PreprocessingConfig()
@@ -46,3 +47,17 @@ if __name__ == "__main__":
         )
         with open(scored_pairs_path, "wb") as f:
             pickle.dump(scored_pairs, f)
+
+    stage_2_config = Stage2Config()
+    clusters_path = Path(stage_2_config.clusters_output_path)
+    if clusters_path.exists():
+        print("Loading clustered proteins from pickle")
+        with open(clusters_path, "rb") as f:
+            clustered_proteins: dict[int, list[int]] = pickle.load(f)
+    else:
+        print("No pickle data found, clustering proteins")
+        clustered_proteins = cluster_proteins(
+            scored_pairs, len(preprocessed_dataset.proteins), stage_2_config
+        )
+        with open(clusters_path, "wb") as f:
+            pickle.dump(clustered_proteins, f)

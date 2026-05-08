@@ -17,3 +17,13 @@ class Stage1Config:
     alignment_scoring_matrix: str = "BLOSUM62"
     gap_opening_penalty: float = 11.0
     gap_extension_penalty: float = 1.0
+
+
+@dataclass
+class Stage2Config:
+    mcl_inflation: float = 2.0
+    mcl_expansion: int = 2
+    mcl_prune_threshold: float = 1e-5
+    mcl_max_iters: int = 100
+    mcl_convergence_threshold: float = 1e-4
+    clusters_output_path: str = "data/clustered_proteins.pkl"
