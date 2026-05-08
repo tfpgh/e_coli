@@ -50,7 +50,7 @@ def _max_column_chaos(transition_matrix: sp.csc_matrix) -> float:
 def _extract_clusters(transition_matrix: sp.csc_matrix) -> dict[int, list[int]]:
     M = transition_matrix.tocsr()
     clusters: dict[int, list[int]] = {}
-    for row_idx in range(M.shape[0]):
+    for row_idx in range(M.shape[0]):  # pyright: ignore[reportOptionalSubscript]
         members = M.indices[M.indptr[row_idx] : M.indptr[row_idx + 1]]
         if len(members) > 0:
             clusters[int(row_idx)] = sorted(int(m) for m in members)
@@ -71,7 +71,7 @@ def cluster_proteins(
         for _ in range(config.mcl_expansion - 1):
             expanded = expanded @ transition_matrix_csr
 
-        transition_matrix = expanded.tocsc()
+        transition_matrix = sp.csc_matrix(expanded)
 
         # Inflation
         transition_matrix.data **= config.mcl_inflation
