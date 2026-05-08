@@ -34,5 +34,15 @@ if __name__ == "__main__":
     print(f"Naive pair count: {len(preprocessed_dataset.proteins) ** 2:,}")
     print(f"Filtered pair count: {len(filtered_protein_pairs):,}")
 
-    print("Scoring protein pairs")
-    score_protein_pairs(filtered_protein_pairs, preprocessed_dataset, stage_1_config)
+    scored_pairs_path = Path(stage_1_config.scored_pairs_output_path)
+    if scored_pairs_path.exists():
+        print("Loading scored pairs from pickle")
+        with open(scored_pairs_path, "rb") as f:
+            scored_pairs: dict[tuple[int, int], float] = pickle.load(f)
+    else:
+        print("No pickle data found, scoring protein pairs")
+        scored_pairs = score_protein_pairs(
+            filtered_protein_pairs, preprocessed_dataset, stage_1_config
+        )
+        with open(scored_pairs_path, "wb") as f:
+            pickle.dump(scored_pairs, f)
