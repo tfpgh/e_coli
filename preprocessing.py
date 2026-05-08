@@ -67,9 +67,5 @@ def preprocess_dataset(config: PreprocessingConfig) -> PreprocessedDataset:
                         protein_str="".join(protein_fasta_str.split("\n")[1:]),
                     )
                 )
-    preprocessed_dataset = PreprocessedDataset(metadata=metadata, proteins=proteins)
 
-    with open(config.preprocessed_data_output_path, "w") as f:
-        f.write(preprocessed_dataset.model_dump_json(indent=4))
-
-    return preprocessed_dataset
+    return PreprocessedDataset(metadata=metadata, proteins=proteins)

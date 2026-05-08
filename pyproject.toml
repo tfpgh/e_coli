@@ -7,6 +7,7 @@ requires-python = ">=3.14"
 dependencies = [
     "biopython>=1.87",
     "numba>=0.65.1",
+    "numba-progress>=1.2.0",
     "numpy>=2.4.4",
     "pydantic>=2.13.3",
     "tqdm>=4.67.3",

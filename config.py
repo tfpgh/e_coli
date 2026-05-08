@@ -11,5 +11,8 @@ class PreprocessingConfig:
 class Stage1Config:
     kmer_filter_k: int = 5
     kmer_filter_threshold: int = 3
+    filtered_proteins_output_path: str = "data/filtered_protein_pairs.pkl"
 
     alignment_scoring_matrix: str = "BLOSUM62"
+    gap_opening_penalty: int = 11
+    gap_extension_penalty: int = 1
