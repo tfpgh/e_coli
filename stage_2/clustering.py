@@ -54,12 +54,17 @@ def _max_column_chaos(transition_matrix: sp.csc_matrix) -> float:
 
 
 def _extract_clusters(transition_matrix: sp.csc_matrix) -> dict[int, list[int]]:
-    M = transition_matrix.tocsr()
+    """Each node is assigned to its dominant attractor (column-wise argmax)."""
+    M = transition_matrix.tocsc()
+    n_cols = M.shape[1]  # pyright: ignore[reportOptionalSubscript]
     clusters: dict[int, list[int]] = {}
-    for row_idx in range(M.shape[0]):  # pyright: ignore[reportOptionalSubscript]
-        members = M.indices[M.indptr[row_idx] : M.indptr[row_idx + 1]]
-        if len(members) > 0:
-            clusters[int(row_idx)] = sorted(int(m) for m in members)
+    for col_idx in range(n_cols):
+        start, end = M.indptr[col_idx], M.indptr[col_idx + 1]
+        if start == end:
+            continue
+        best_local = M.data[start:end].argmax()
+        attractor = int(M.indices[start + best_local])
+        clusters.setdefault(attractor, []).append(int(col_idx))
     return clusters
 
 

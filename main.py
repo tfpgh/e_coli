@@ -59,7 +59,7 @@ if __name__ == "__main__":
         clustered_proteins = cluster_proteins(
             scored_pairs, len(preprocessed_dataset.proteins), stage_2_config
         )
-        # with open(clusters_path, "wb") as f:
-        # pickle.dump(clustered_proteins, f)
+        with open(clusters_path, "wb") as f:
+            pickle.dump(clustered_proteins, f)
 
     summarize_clusters(clustered_proteins, len(preprocessed_dataset.proteins))
