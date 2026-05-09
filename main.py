@@ -5,7 +5,7 @@ from config import PreprocessingConfig, Stage1Config, Stage2Config
 from preprocessing import PreprocessedDataset, preprocess_dataset
 from stage_1.kmer_filter import kmer_filter
 from stage_1.scoring import score_protein_pairs
-from stage_2.clustering import cluster_proteins
+from stage_2.clustering import cluster_proteins, summarize_clusters
 
 if __name__ == "__main__":
     preprocessing_config = PreprocessingConfig()
@@ -59,5 +59,7 @@ if __name__ == "__main__":
         clustered_proteins = cluster_proteins(
             scored_pairs, len(preprocessed_dataset.proteins), stage_2_config
         )
-        with open(clusters_path, "wb") as f:
-            pickle.dump(clustered_proteins, f)
+        # with open(clusters_path, "wb") as f:
+        # pickle.dump(clustered_proteins, f)
+
+    summarize_clusters(clustered_proteins, len(preprocessed_dataset.proteins))
