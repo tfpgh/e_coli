@@ -40,19 +40,6 @@ def _column_normalize(transition_matrix: sp.csc_matrix) -> sp.csc_matrix:
     return (transition_matrix @ sp.diags(inv)).tocsc()  # pyright: ignore[reportAttributeAccessIssue]
 
 
-def _max_column_chaos(transition_matrix: sp.csc_matrix) -> float:
-    """
-    Per-column chaos = max(column) - sum(column^2).
-
-    As this approaches zero over all columns, clustering is converging.
-    """
-    col_max = np.asarray(transition_matrix.max(axis=0).todense()).ravel()
-    col_sum_of_squares = np.asarray(
-        transition_matrix.multiply(transition_matrix).sum(axis=0)
-    ).ravel()
-    return float(np.max(col_max - col_sum_of_squares))
-
-
 def _extract_clusters(transition_matrix: sp.csc_matrix) -> dict[int, list[int]]:
     """Each node is assigned to its dominant attractor (column-wise argmax)."""
     M = transition_matrix.tocsc()
@@ -66,31 +53,6 @@ def _extract_clusters(transition_matrix: sp.csc_matrix) -> dict[int, list[int]]:
         attractor = int(M.indices[start + best_local])
         clusters.setdefault(attractor, []).append(int(col_idx))
     return clusters
-
-
-def summarize_clusters(clusters: dict[int, list[int]], n_proteins: int) -> None:
-    sizes = np.array([len(members) for members in clusters.values()])
-    total_membership = int(sizes.sum())
-
-    print(f"\nClusters: {len(clusters):,}")
-    print(f"Total membership: {total_membership:,} (proteins: {n_proteins:,})")
-    if total_membership > n_proteins:
-        print(f"  → overlap: {total_membership / n_proteins:.2f}x (soft MCL convergence)")
-    elif total_membership < n_proteins:
-        print(f"  → unassigned: {n_proteins - total_membership:,}")
-    print(f"Largest cluster: {int(sizes.max()):,}")
-    print(f"Median cluster size: {int(np.median(sizes))}")
-    print(f"Singletons: {int((sizes == 1).sum()):,}")
-    print("Size distribution:")
-    buckets: list[tuple[str, np.ndarray]] = [
-        ("= 1", sizes == 1),
-        ("2-5", (sizes >= 2) & (sizes <= 5)),
-        ("6-20", (sizes >= 6) & (sizes <= 20)),
-        ("21-50", (sizes >= 21) & (sizes <= 50)),
-        ("51+", sizes >= 51),
-    ]
-    for label, mask in buckets:
-        print(f"  {label:>6}: {int(mask.sum()):,}")
 
 
 def cluster_proteins(
@@ -122,15 +84,13 @@ def cluster_proteins(
 
         transition_matrix = _column_normalize(transition_matrix)
 
-        chaos = _max_column_chaos(transition_matrix)
         if prev_matrix is None:
             max_change = float("inf")
         else:
             diff = transition_matrix - prev_matrix
             max_change = float(np.abs(diff.data).max()) if diff.nnz > 0 else 0.0
         print(
-            f"Iter {iteration:3d}: nnz={transition_matrix.nnz:>10} "
-            f"chaos={chaos:.2e} Δmax={max_change:.2e}"
+            f"Iter {iteration:3d}: nnz={transition_matrix.nnz:>10} Δmax={max_change:.2e}"
         )
         if max_change < config.mcl_convergence_threshold:
             break
