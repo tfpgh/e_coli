@@ -24,7 +24,7 @@ class Stage2Config:
     mcl_inflation: float = 2.0
     mcl_expansion: int = 2
     mcl_prune_threshold: float = 1e-6
-    mcl_edge_threshold: float = 0.20
+    mcl_edge_threshold: float = 0.30
     mcl_max_iters: int = 100
     mcl_convergence_threshold: float = 1e-6
     clusters_output_path: str = "data/clustered_proteins.pkl"
